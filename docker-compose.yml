@@ -1,0 +1,9 @@
+version: '2'
+services:
+  mongoDb:
+    image: mongo:3.4
+    ports:
+      - 27017:27017
+    volumes:
+      - ./devmongo:/data/db
+    command: mongod --auth
