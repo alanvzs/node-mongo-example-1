@@ -1,27 +1,17 @@
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/eats');
+
+const Restaurant = mongoose.model('Restaurant', { name: String });
 
 exports.index = function ( req, res, next ){
-  MongoClient.connect(url, { useNewUrlParser: true }, function(err, db) {
-    if (err) throw err;
-    var dbo = db.db("eats");
-    dbo.collection("restaurants").findOne({}, function(err, result) {
-      if (err) throw err;
-      db.close();
-      res.json(result);
-    });
+  Restaurant.find().exec(function (err, result) {
+    res.json(result);
   });
 };
 
 exports.store = function ( req, res, next ){
-  MongoClient.connect(url, { useNewUrlParser: true }, function(err, db) {
-    if (err) throw err;
-    var dbo = db.db("eats");
-    var restaurant = { name: req.body.name };
-    dbo.collection("restaurants").insertOne(restaurant, function(err, result) {
-      if (err) throw err;
-      db.close();
-      res.json({ status: "created" });
-    });
+  const restaurant = new Restaurant({ name: req.body.name });
+  restaurant.save().then(() => {
+    res.json({ status: "created" });
   });
 };
